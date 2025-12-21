@@ -1,0 +1,83 @@
+﻿@page "/Reveal/{EncodedPayload}"
+@using TOTPGuard.Shared
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<img src="/reveal-otp.png" class="mx-5 mb-3" alt="reveal otp" />
+
+<h3 class="mb-3">One-Time Password</h3>
+
+<div class="mb-2">
+    <h5>@Label</h5>
+</div>
+
+<div class="mb-2">
+    <span class="fs-3 otp">@Code</span>
+</div>
+
+<div>
+    <strong>Expires in:</strong> @RemainingSeconds s
+</div>
+
+@code {
+    [Parameter] public string EncodedPayload { get; set; } = "";
+
+    private string Label = "";
+    private string Code = "";
+    private int RemainingSeconds;
+
+    private System.Timers.Timer? timer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchOtpAsync();
+        StartTimer();
+    }
+
+    private async Task FetchOtpAsync()
+    {
+        try
+        {
+            var response = await Http.GetFromJsonAsync<OtpGenerationResponse>($"https://localhost:7056/Payload?encodedPayload={EncodedPayload}");
+            if (response != null)
+            {
+                Label = response.Label;
+                Code = response.Otp;
+                RemainingSeconds = (int)(response.ExpiresAtUtc - DateTime.UtcNow).TotalSeconds;
+            }
+        }
+        catch
+        {
+            Navigation.NavigateTo("/NotFound");
+        }
+    }
+
+    private void StartTimer()
+    {
+        timer = new System.Timers.Timer(1000);
+        
+        timer.Elapsed += async (s, e) =>
+        {
+            if (RemainingSeconds > 0)
+            {
+                RemainingSeconds--;
+                await InvokeAsync(StateHasChanged);
+            }
+            else
+            {
+                await FetchOtpAsync();
+                await InvokeAsync(StateHasChanged);
+            }
+        };
+
+        timer.AutoReset = true;
+        
+        timer.Start();
+    }
+
+    public void Dispose()
+    {
+        timer?.Stop();
+        timer?.Dispose();
+    }
+}

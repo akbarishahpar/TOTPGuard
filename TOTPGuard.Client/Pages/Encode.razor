@@ -1,0 +1,98 @@
+﻿@page "/"
+@using TOTPGuard.Shared
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<img src="/encode-otp.jpg" class="mx-5 mb-3" alt="encode otp" />
+
+<h4 class="mb-4 text-center">Encode OTP Secret</h4>
+
+<div class="text-start">
+    <EditForm Model="@model" OnValidSubmit="GenerateAsync">
+        <DataAnnotationsValidator />
+        <div class="mb-3">
+            <label class="form-label">Label</label>
+            <InputText class="form-control" @bind-Value="model.Label" name="Label" autocomplete="username" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Secret</label>
+            <InputText class="form-control" @bind-Value="model.Secret" name="Secret" autocomplete="current-password" type="password" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Step (seconds)</label>
+            <InputNumber class="form-control" @bind-Value="model.Step" />
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Expires In</label>
+            <InputSelect class="form-select" @bind-Value="model.ExpiresInMinutes">
+                @foreach (var option in ExpiryOptions)
+                {
+                    <option value="@option.Minutes">@option.Label</option>
+                }
+            </InputSelect>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">
+            Generate Payload
+        </button>
+    </EditForm>
+</div>
+
+@code {
+    private PayloadFormModel model = new();
+
+    private static readonly List<ExpiryOption> ExpiryOptions =
+    [
+        new("15m", 15),
+        new("30m", 30),
+        new("45m", 45),
+        new("1h", 60),
+        new("2h", 120),
+        new("4h", 240),
+        new("8h", 480),
+        new("12h", 720),
+        new("1d", 1440),
+        new("2d", 2880),
+        new("3d", 4320),
+        new("1w", 10080),
+        new("2w", 20160),
+        new("1M", 43200),
+        new("3M", 129600),
+        new("6M", 259200),
+        new("1Y", 525600),
+    ];
+
+    private async Task GenerateAsync()
+    {
+        var response = await Http.PostAsJsonAsync(
+            "https://localhost:7056/Payload",
+            new PayloadEncodingRequest
+            {
+                Label = model.Label,
+                Secret = model.Secret,
+                Step = model.Step,
+                ExpiresAtUtc = DateTime.UtcNow.AddMinutes(model.ExpiresInMinutes)
+            }
+        );
+
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        var encodedPayload = await response.Content.ReadAsStringAsync();
+        
+        Navigation.NavigateTo($"/reveal/{encodedPayload}");
+    }
+
+    private sealed record ExpiryOption(string Label, int Minutes);
+
+    private sealed class PayloadFormModel
+    {
+        public string Label { get; set; } = "";
+        public string Secret { get; set; } = "";
+        public int Step { get; set; } = 30;
+        public int ExpiresInMinutes { get; set; } = 240;
+    }
+}
