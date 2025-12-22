@@ -11,7 +11,7 @@ services:
 
   totpguard_client:
     build:
-      context: .
+      context: TOTPGuard.Client
       dockerfile: TOTPGuard.Client/Dockerfile
     container_name: totpguard_client
     depends_on:
