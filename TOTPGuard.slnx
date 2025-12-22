@@ -1,11 +1,4 @@
 <Solution>
-  <Folder Name="/Solution Items/">
-    <File Path="docker-compose.yaml" />
-  </Folder>
-  <Folder Name="/Solution Items/nginx/">
-    <File Path="Dockerfile.txt" />
-    <File Path="nginx.conf" />
-  </Folder>
   <Project Path="TOTPGuard.Api/TOTPGuard.Api.csproj" Id="cfa0e5da-0dce-456e-a0ad-532aef6eadc9" />
   <Project Path="TOTPGuard.Client/TOTPGuard.Client.csproj" Id="91c85d47-4062-40be-b196-89a717aed67f" />
   <Project Path="TOTPGuard.Shared/TOTPGuard.Shared.csproj" Id="1c2e5293-e765-487d-8d80-91b55d7709b7" />
