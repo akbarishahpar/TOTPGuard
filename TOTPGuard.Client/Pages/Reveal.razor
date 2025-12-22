@@ -38,7 +38,7 @@
     {
         try
         {
-            var response = await Http.GetFromJsonAsync<OtpGenerationResponse>($"https://localhost:7056/Payload?encodedPayload={EncodedPayload}");
+            var response = await Http.GetFromJsonAsync<OtpGenerationResponse>($"/api/Payload?encodedPayload={EncodedPayload}");
             if (response != null)
             {
                 Label = response.Label;

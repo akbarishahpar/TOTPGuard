@@ -68,7 +68,7 @@
     private async Task GenerateAsync()
     {
         var response = await Http.PostAsJsonAsync(
-            "https://localhost:7056/Payload",
+            "/api/Payload",
             new PayloadEncodingRequest
             {
                 Label = model.Label,
