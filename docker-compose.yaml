@@ -6,27 +6,20 @@ services:
     container_name: totpguard_api
     networks:
       - totpguard_net
+    expose:
+      - "8080"
 
   totpguard_client:
     build:
       context: .
       dockerfile: TOTPGuard.Client/Dockerfile
     container_name: totpguard_client
-    networks:
-      - totpguard_net
-
-  nginx:
-    build:
-      context: ./nginx
-    container_name: totpguard_nginx
-    ports:
-      - "80:80"
-      - "8080:80"
     depends_on:
       - totpguard_api
-      - totpguard_client
     networks:
       - totpguard_net
+    ports:
+      - "80:80"
 
 networks:
   totpguard_net:
