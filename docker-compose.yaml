@@ -1,8 +1,8 @@
 services:
   totpguard_api:
     build:
-      context: TOTPGuard.Api
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: TOTPGuard.Api/Dockerfile
     container_name: totpguard_api
     networks:
       - totpguard_net
@@ -11,8 +11,8 @@ services:
 
   totpguard_client:
     build:
-      context: TOTPGuard.Client
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: TOTPGuard.Client/Dockerfile
     container_name: totpguard_client
     depends_on:
       - totpguard_api
