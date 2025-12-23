@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: TOTPGuard.Api/Dockerfile
+    environment:
+      SymmetricCryptographyOptions__Key: "YourSecretKeyHere"
     container_name: totpguard_api
     networks:
       - totpguard_net
