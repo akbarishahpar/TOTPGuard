@@ -8,18 +8,19 @@
 
 <h3 class="mb-3">One-Time Password</h3>
 
+<div class="mb-2">
+    <h5>@Label</h5>
+</div>
+
 <div class="mb-2" @onclick="CopyCode">
     @if (Copied)
     {
-        <h5>Copied!</h5>
+        <span class="fs-3 otp">Copied!</span>
     }
+    else
     {
-        <h5>@Label</h5>
+        <span class="fs-3 otp">@Code</span>
     }
-</div>
-
-<div class="mb-2">
-    <span class="fs-3 otp">@Code</span>
 </div>
 
 <div>
@@ -36,7 +37,7 @@
     private string Label = "";
     private string Code = "";
     private int RemainingSeconds;
-    
+
     private bool Copied = false;
     private System.Timers.Timer? timer;
 
@@ -77,7 +78,7 @@
     private void StartTimer()
     {
         timer = new System.Timers.Timer(1000);
-        
+
         timer.Elapsed += async (s, e) =>
         {
             if (RemainingSeconds > 0)
@@ -93,7 +94,7 @@
         };
 
         timer.AutoReset = true;
-        
+
         timer.Start();
     }
 

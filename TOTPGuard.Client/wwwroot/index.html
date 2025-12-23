@@ -22,7 +22,7 @@
     <div id="app">
         <div class="cat-loader-container">
             <div class="cat">
-                <img src="/loading-cat.gif" alt="loading"/>
+                <img src="/loading-cat.gif" alt="loading" />
             </div>
             <div class="loader-text">Loading…</div>
         </div>
@@ -35,6 +35,11 @@
     </div>
 
     <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
+    <script>
+        window.copyToClipboard = (text) => {
+            return navigator.clipboard.writeText(text);
+        };
+    </script>
 </body>
 
 </html>
