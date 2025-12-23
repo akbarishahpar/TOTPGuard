@@ -1,14 +1,21 @@
-﻿@page "/Reveal/{EncodedPayload}"
+﻿@page "/r/{EncodedPayload}"
 @using TOTPGuard.Shared
 @inject HttpClient Http
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
 
 <img src="/reveal-otp.png" class="mx-5 mb-3" alt="reveal otp" />
 
 <h3 class="mb-3">One-Time Password</h3>
 
-<div class="mb-2">
-    <h5>@Label</h5>
+<div class="mb-2" @onclick="CopyCode">
+    @if (Copied)
+    {
+        <h5>Copied!</h5>
+    }
+    {
+        <h5>@Label</h5>
+    }
 </div>
 
 <div class="mb-2">
@@ -19,19 +26,34 @@
     <strong>Expires in:</strong> @RemainingSeconds s
 </div>
 
+<NavLink href="/" class="btn btn-dark mt-3">
+    Encode &amp; Share!
+</NavLink>
+
 @code {
     [Parameter] public string EncodedPayload { get; set; } = "";
 
     private string Label = "";
     private string Code = "";
     private int RemainingSeconds;
-
+    
+    private bool Copied = false;
     private System.Timers.Timer? timer;
 
     protected override async Task OnInitializedAsync()
     {
         await FetchOtpAsync();
         StartTimer();
+    }
+
+    private async Task CopyCode()
+    {
+        await JS.InvokeVoidAsync("copyToClipboard", Code);
+        Copied = true;
+        StateHasChanged();
+        await Task.Delay(1000);
+        Copied = false;
+        StateHasChanged();
     }
 
     private async Task FetchOtpAsync()

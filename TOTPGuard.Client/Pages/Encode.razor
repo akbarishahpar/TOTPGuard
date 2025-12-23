@@ -83,7 +83,7 @@
 
         var encodedPayload = await response.Content.ReadAsStringAsync();
         
-        Navigation.NavigateTo($"/reveal/{encodedPayload}");
+        Navigation.NavigateTo($"/r/{encodedPayload}");
     }
 
     private sealed record ExpiryOption(string Label, int Minutes);
